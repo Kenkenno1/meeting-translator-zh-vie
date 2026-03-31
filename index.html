@@ -1592,10 +1592,12 @@ Your task:
         }
 
         // Step 2: Refine in background, then TTS with final text (desktop)
+        // Capture current controller identity so refine callback can detect stale results
         const refineSignal = controller.signal;
+        const refineController = controller;
         refineTranslation(text, translated, srcLang, tgtLang, refineSignal)
           .then(refined => {
-            if (refineSignal.aborted) return;
+            if (refineSignal.aborted || (state.controller && state.controller !== refineController)) return;
             const finalText = (refined && refined !== translated) ? refined : translated;
             if (refined && refined !== translated) {
               // Update UI
@@ -1827,9 +1829,13 @@ Your task:
         return;
       }
       if (activeRecognition) {
-        // Stop current then start new
+        // Stop current then start new — detach old recognizer first so its
+        // onend won't call stopMic() and cancel the pending switch timer.
+        const old = activeRecognition;
+        activeRecognition = null;
+        activeMicSpeaker = null;
+        try { old.stop(); } catch {}
         const pending = speaker;
-        try { activeRecognition.stop(); } catch {}
         _micDelayTimer = setTimeout(() => { _micDelayTimer = null; startMic(pending); }, CONFIG.MIC_SWITCH_DELAY_MS);
         return;
       }

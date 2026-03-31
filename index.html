@@ -1,0 +1,2142 @@
+<!doctype html>
+<html lang="zh-Hant" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="會議翻譯" />
+  <link rel="apple-touch-icon" href="icon-180.png?v=2" />
+  <link rel="icon" type="image/svg+xml" href="icon-180.svg" />
+  <title>會議翻譯 | 中越即時口譯</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;600&family=Noto+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===== Dark theme (default) ===== */
+    [data-theme="dark"]{
+      --bg:#0a0c10;
+      --panel:rgba(255,255,255,0.05);
+      --panel2:rgba(255,255,255,0.02);
+      --border:rgba(255,255,255,0.08);
+      --muted:rgba(255,255,255,0.6);
+      --text:rgba(255,255,255,0.92);
+      --danger:rgba(248,113,113,0.95);
+      --dangerBg:rgba(248,113,113,0.10);
+      --dangerBd:rgba(248,113,113,0.25);
+      --success:rgba(16,185,129,0.95);
+      --successBg:rgba(16,185,129,0.12);
+      --blue:rgba(96,165,250,0.95);
+      --blueBg:rgba(96,165,250,0.10);
+      --blueBd:rgba(96,165,250,0.30);
+      --chipBg:rgba(0,0,0,0.35);
+      --chipBd:rgba(255,255,255,0.10);
+      --focus:rgba(255,255,255,0.18);
+      --toastBg:rgba(20,22,28,0.95);
+      --toastBd:rgba(255,255,255,0.12);
+      --skelBar:rgba(255,255,255,0.06);
+      --outColor:rgba(130,177,255,0.95);
+      --accent:#6ee7b7;
+      --accentBg:rgba(110,231,183,0.10);
+      --accentBd:rgba(110,231,183,0.30);
+      --twTextColor:#86efac;
+      --vieTextColor:#93c5fd;
+      --twColor:#34d399;
+      --vieColor:#f472b6;
+      --logBg:rgba(255,255,255,0.03);
+      --summaryBg:rgba(255,255,255,0.04);
+      --micBd:rgba(255,255,255,0.12);
+      --micBg:linear-gradient(135deg,rgba(255,255,255,0.10) 0%,rgba(255,255,255,0.04) 40%,rgba(255,255,255,0.02) 60%,rgba(255,255,255,0.07) 100%);
+    }
+
+    /* ===== Light theme ===== */
+    [data-theme="light"]{
+      --bg:#f4f5f7;
+      --panel:rgba(0,0,0,0.03);
+      --panel2:rgba(0,0,0,0.01);
+      --border:rgba(0,0,0,0.08);
+      --muted:rgba(0,0,0,0.50);
+      --text:rgba(0,0,0,0.88);
+      --danger:rgba(220,53,69,0.95);
+      --dangerBg:rgba(220,53,69,0.08);
+      --dangerBd:rgba(220,53,69,0.25);
+      --success:rgba(22,163,74,0.95);
+      --successBg:rgba(22,163,74,0.10);
+      --blue:rgba(59,130,246,0.95);
+      --blueBg:rgba(59,130,246,0.08);
+      --blueBd:rgba(59,130,246,0.25);
+      --chipBg:rgba(0,0,0,0.05);
+      --chipBd:rgba(0,0,0,0.10);
+      --focus:rgba(0,0,0,0.12);
+      --toastBg:rgba(255,255,255,0.96);
+      --toastBd:rgba(0,0,0,0.10);
+      --skelBar:rgba(0,0,0,0.07);
+      --outColor:rgba(37,99,235,0.95);
+      --accent:#059669;
+      --accentBg:rgba(5,150,105,0.08);
+      --accentBd:rgba(5,150,105,0.25);
+      --twTextColor:#166534;
+      --vieTextColor:#1e40af;
+      --twColor:#059669;
+      --vieColor:#db2777;
+      --logBg:rgba(0,0,0,0.02);
+      --summaryBg:rgba(0,0,0,0.03);
+      --micBd:rgba(0,0,0,0.08);
+      --micBg:linear-gradient(135deg,rgba(255,255,255,0.6) 0%,rgba(255,255,255,0.3) 50%,rgba(255,255,255,0.5) 100%);
+    }
+
+    :root{--radius:16px}
+
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{height:100%;margin:0}
+    body{
+      background:var(--bg);
+      color:var(--text);
+      font-family: system-ui, -apple-system, "Noto Sans TC", "Noto Sans", sans-serif;
+      -webkit-font-smoothing:antialiased;
+      overscroll-behavior:none;
+    }
+
+    .wrap{
+      max-width:540px;
+      margin:0 auto;
+      padding:6px;
+      padding-top:max(6px, env(safe-area-inset-top));
+      padding-bottom:max(6px, env(safe-area-inset-bottom));
+      height:100vh;
+      height:100dvh;
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+    }
+
+    /* ===== Top bar ===== */
+    .toprow{
+      display:flex;
+      align-items:center;
+      gap:4px;
+      flex-shrink:0;
+    }
+    .app-title{
+      font-size:12px;
+      font-weight:600;
+      color:var(--muted);
+      letter-spacing:0.3px;
+      white-space:nowrap;
+    }
+
+    /* ===== Buttons ===== */
+    .icon{
+      border:0;
+      background:transparent;
+      color:var(--muted);
+      border-radius:10px;
+      padding:10px 12px;
+      font-size:14px;
+      line-height:1;
+      cursor:pointer;
+      transition:opacity 100ms, background 100ms;
+      white-space:nowrap;
+      -webkit-user-select:none;
+      user-select:none;
+      min-width:44px;
+      min-height:44px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .icon:hover{background:rgba(128,128,128,0.08)}
+    .icon:active{background:rgba(128,128,128,0.15)}
+    .icon.active{color:var(--accent);font-weight:600}
+
+    /* ===== Speaker zone ===== */
+    .zone{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      flex:1;
+      min-height:0;
+    }
+    .zone-vie{
+      transform:rotate(180deg);
+    }
+
+    .zone-label{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:0 4px;
+      flex-shrink:0;
+    }
+    .zone-label .tag{
+      font-size:12px;
+      font-weight:600;
+      padding:2px 10px;
+      border-radius:8px;
+      letter-spacing:0.5px;
+    }
+    .tag-tw{background:rgba(110,231,183,0.15);color:var(--twColor)}
+    .tag-vie{background:rgba(249,168,212,0.15);color:var(--vieColor)}
+    [data-theme="light"] .tag-tw{background:rgba(5,150,105,0.12)}
+    [data-theme="light"] .tag-vie{background:rgba(219,39,119,0.12)}
+
+    .zone-label .status-text{
+      font-size:11px;
+      color:var(--muted);
+    }
+
+    /* ===== Display panel (translation result) ===== */
+    .display{
+      flex:1;
+      min-height:0;
+      border-radius:var(--radius);
+      background:linear-gradient(180deg, var(--panel), var(--panel2));
+      border:1px solid var(--border);
+      overflow:auto;
+      padding:14px 18px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+    .display .translated{
+      font-size:28px;
+      font-weight:600;
+      line-height:1.6;
+      letter-spacing:0.01em;
+      word-break:break-word;
+      white-space:pre-wrap;
+    }
+    /* TW zone text: green tone */
+    #displayTw .translated{
+      color:var(--twTextColor);
+      font-family:"Noto Sans TC", "Microsoft JhengHei", "PingFang TC", system-ui, sans-serif;
+    }
+    /* VIE zone text: blue tone */
+    #displayVie .translated{
+      color:var(--vieTextColor);
+      font-family:"Noto Sans", "Segoe UI", "Arial", system-ui, sans-serif;
+    }
+    .display .original{
+      font-size:15px;
+      color:var(--muted);
+      opacity:0.8;
+      line-height:1.6;
+      word-break:break-word;
+      white-space:pre-wrap;
+    }
+    .display .placeholder{
+      color:var(--muted);
+      opacity:0.3;
+      font-style:italic;
+      font-size:18px;
+    }
+
+    /* Loading skeleton */
+    @keyframes skeleton-pulse{0%,100%{opacity:0.3}50%{opacity:0.7}}
+    .display.loading .translated::before{
+      content:"";
+      display:block;
+      height:34px;
+      width:70%;
+      background:var(--skelBar);
+      border-radius:6px;
+      animation:skeleton-pulse 1.5s ease-in-out infinite;
+    }
+
+    /* Recording border */
+    .display.recording-active{
+      border-color:rgba(220,38,38,0.8);
+      box-shadow:0 0 18px rgba(220,38,38,0.35);
+      animation:recording-border 1s ease-in-out infinite;
+    }
+    @keyframes recording-border{
+      0%,100%{border-color:rgba(220,38,38,0.8);opacity:1}
+      50%{border-color:rgba(220,38,38,0.3);opacity:0.7}
+    }
+
+    /* Speaking glow */
+    .display.speaking-glow{
+      border-color:var(--accentBd);
+      box-shadow:0 0 20px rgba(110,231,183,0.2);
+    }
+
+    /* ===== Mic button ===== */
+    .btn-mic{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      padding:10px 10px;
+      border:1px solid var(--micBd);
+      border-radius:var(--radius);
+      font-size:15px;
+      font-weight:600;
+      font-family:inherit;
+      cursor:pointer;
+      -webkit-user-select:none;
+      user-select:none;
+      transition:box-shadow 200ms, transform 80ms, border-color 200ms, background 200ms;
+      background:var(--micBg);
+      backdrop-filter:blur(10px);
+      -webkit-backdrop-filter:blur(10px);
+      color:var(--text);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,0.12),inset 0 -1px 0 rgba(0,0,0,0.08),0 2px 8px rgba(0,0,0,0.12);
+      flex-shrink:0;
+    }
+    .btn-mic:active{transform:scale(0.97)}
+
+    .btn-mic.mic-pending{
+      border-color:rgba(220,38,38,0.4);
+      background:linear-gradient(135deg,rgba(220,38,38,0.25) 0%,rgba(239,68,68,0.30) 50%,rgba(220,38,38,0.25) 100%);
+      color:rgba(255,255,255,0.8);
+      animation:mic-pending-pulse 1s ease-in-out infinite;
+    }
+    @keyframes mic-pending-pulse{0%,100%{opacity:0.7}50%{opacity:1}}
+
+    .btn-mic.recording{
+      border-color:rgba(220,38,38,0.8);
+      background:linear-gradient(135deg,rgba(220,38,38,0.85) 0%,rgba(239,68,68,0.90) 50%,rgba(220,38,38,0.85) 100%);
+      color:#fff;
+      box-shadow:0 0 28px rgba(220,38,38,0.55);
+      animation:mic-pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes mic-pulse{
+      0%,100%{opacity:0.85}
+      50%{opacity:1}
+    }
+    .btn-mic:disabled{opacity:0.35;cursor:not-allowed;animation:none}
+
+    /* ===== Divider ===== */
+    .divider{
+      width:100%;
+      height:1px;
+      background:var(--border);
+      flex-shrink:0;
+    }
+
+    /* ===== Conversation log (inside overlay) ===== */
+    .log-list{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      padding:6px;
+    }
+    .log-entry{
+      padding:8px 12px;
+      border-radius:12px;
+      background:var(--logBg);
+      border:1px solid var(--border);
+      font-size:13px;
+      line-height:1.6;
+    }
+    .log-entry .log-speaker{
+      font-weight:600;
+      font-size:12px;
+      margin-bottom:2px;
+    }
+    .log-entry .log-speaker.tw{color:var(--twColor)}
+    .log-entry .log-speaker.vie{color:var(--vieColor)}
+    .log-entry .log-original{color:var(--text);opacity:0.9}
+    .log-entry .log-translated{color:var(--outColor);font-size:12px;margin-top:2px;opacity:0.8}
+    .log-empty{
+      text-align:center;
+      font-size:12px;
+      color:var(--muted);
+      opacity:0.4;
+      padding:12px;
+    }
+
+    /* ===== Summary overlay ===== */
+    .overlay{
+      position:fixed;inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background:rgba(0,0,0,0.6);
+      z-index:50;
+      padding:16px;
+    }
+    .overlay.show{display:flex}
+    .modal{
+      width:100%;
+      max-width:480px;
+      max-height:80vh;
+      background:var(--bg);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+    }
+    .modal-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:16px 20px;
+      border-bottom:1px solid var(--border);
+      flex-shrink:0;
+    }
+    .modal-title{font-size:18px;font-weight:700}
+    .modal-close{
+      background:none;
+      border:1px solid var(--border);
+      color:var(--muted);
+      font-size:14px;
+      font-weight:600;
+      font-family:inherit;
+      cursor:pointer;
+      padding:8px 16px;
+      border-radius:10px;
+      line-height:1;
+    }
+    .modal-close:hover{background:var(--panel)}
+    .modal-body{
+      flex:1;
+      overflow:auto;
+      padding:20px;
+    }
+    .summary-content{
+      font-size:14px;
+      line-height:1.8;
+      word-break:break-word;
+    }
+    .summary-content:empty::before{
+      content:"點擊「產生摘要」開始分析對話紀錄…";
+      color:var(--muted);
+      opacity:0.4;
+      font-style:italic;
+    }
+    .summary-content h3{
+      font-size:15px;
+      font-weight:700;
+      margin:18px 0 8px;
+      padding-bottom:4px;
+      border-bottom:1px solid var(--border);
+      color:var(--accent);
+    }
+    .summary-content h3:first-child{margin-top:0}
+    .summary-content p{margin:6px 0}
+    .summary-content ul{
+      margin:6px 0;
+      padding-left:20px;
+    }
+    .summary-content li{margin:3px 0}
+    .summary-content strong{color:var(--text);font-weight:600}
+    .summary-content table{
+      width:100%;
+      border-collapse:collapse;
+      margin:10px 0;
+      font-size:13px;
+    }
+    .summary-content th{
+      text-align:left;
+      padding:6px 8px;
+      border-bottom:2px solid var(--border);
+      color:var(--accent);
+      font-weight:600;
+      font-size:12px;
+    }
+    .summary-content td{
+      padding:5px 8px;
+      border-bottom:1px solid var(--border);
+    }
+    .summary-content tr:last-child td{border-bottom:none}
+    .modal-footer{
+      padding:12px 20px;
+      border-top:1px solid var(--border);
+      display:flex;
+      gap:8px;
+      flex-shrink:0;
+    }
+    .btn-summary-gen{
+      flex:1;
+      padding:12px;
+      border:none;
+      border-radius:10px;
+      background:var(--accent);
+      color:#000;
+      font-size:14px;
+      font-weight:600;
+      font-family:inherit;
+      cursor:pointer;
+    }
+    .btn-summary-gen:disabled{opacity:0.4;cursor:not-allowed}
+    .btn-summary-copy{
+      padding:12px 16px;
+      border:1px solid var(--border);
+      border-radius:10px;
+      background:var(--panel);
+      color:var(--muted);
+      font-size:14px;
+      font-weight:500;
+      font-family:inherit;
+      cursor:pointer;
+    }
+    .btn-summary-copy:hover{background:var(--focus)}
+
+    /* ===== Settings overlay ===== */
+    .settings-modal{
+      width:100%;
+      max-width:420px;
+      padding:32px 24px;
+    }
+    .settings-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:24px;
+    }
+    .settings-title{font-size:22px;font-weight:700}
+    .settings-prompt{
+      font-size:15px;
+      color:var(--accent);
+      text-align:center;
+      margin-bottom:20px;
+      font-weight:500;
+    }
+    .field{
+      display:grid;
+      gap:6px;
+      margin-top:10px;
+      padding:10px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:var(--panel);
+    }
+    .field label{font-size:12px;color:var(--muted)}
+    .in{
+      width:100%;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:rgba(128,128,128,0.06);
+      color:var(--text);
+      padding:12px;
+      outline:none;
+      font-size:16px;
+      font-family:inherit;
+    }
+    .in:focus{border-color:var(--focus)}
+    .hint{font-size:11px;color:var(--muted);opacity:0.7;padding:4px 6px}
+    .hint a{color:var(--accent);text-decoration:none}
+    .hint a:hover{text-decoration:underline}
+    .btn-verify{
+      width:100%;
+      padding:14px;
+      border:none;
+      border-radius:12px;
+      background:var(--accent);
+      color:#000;
+      font-size:15px;
+      font-weight:600;
+      cursor:pointer;
+      margin-top:8px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+    }
+    .btn-verify:disabled{opacity:0.5;cursor:not-allowed}
+    .btn-verify.verifying{opacity:0.7;pointer-events:none}
+    .verify-dot{
+      width:10px;height:10px;
+      border-radius:50%;
+      background:currentColor;
+      display:none;
+    }
+    .btn-verify.verifying .verify-dot{
+      display:inline-block;
+      animation:blink 0.6s infinite alternate;
+    }
+    @keyframes blink{0%{opacity:1}100%{opacity:0.2}}
+    .verify-result{
+      font-size:13px;
+      text-align:center;
+      margin-top:8px;
+      min-height:20px;
+    }
+    .verify-result.success{color:#22c55e}
+    .verify-result.fail{color:var(--danger)}
+
+    /* ===== Toast ===== */
+    #toastHost{
+      position:fixed;
+      bottom:max(16px, env(safe-area-inset-bottom, 16px));
+      left:50%;
+      transform:translateX(-50%);
+      z-index:9999;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      align-items:center;
+      pointer-events:none;
+      max-width:340px;
+      width:90%;
+    }
+    .toast-item{
+      background:var(--toastBg);
+      color:var(--muted);
+      border:1px solid var(--toastBd);
+      border-radius:12px;
+      padding:10px 16px;
+      font-size:13px;
+      line-height:1.5;
+      box-shadow:0 4px 16px rgba(0,0,0,0.3);
+      opacity:0;
+      transform:translateY(8px);
+      transition:opacity 120ms ease,transform 120ms ease;
+      pointer-events:auto;
+      cursor:pointer;
+      text-align:center;
+    }
+    .toast-item.show{opacity:1;transform:translateY(0)}
+    .toast-item.out{opacity:0;transform:translateY(8px)}
+    .toast-item.toast-error{border-color:var(--dangerBd);background:var(--dangerBg);color:var(--danger)}
+
+    /* ===== Summary section inside log overlay ===== */
+    .log-count-header{
+      font-size:13px;
+      color:var(--muted);
+      opacity:0.6;
+      margin-left:6px;
+    }
+    .summary-section{
+      margin-top:16px;
+      padding-top:16px;
+      border-top:1px solid var(--border);
+    }
+    .summary-divider{
+      text-align:center;
+      font-size:12px;
+      color:var(--muted);
+      opacity:0.5;
+      margin-bottom:12px;
+    }
+
+    /* ===== Play button (floating mini circle) ===== */
+    .display{position:relative}
+    .btn-play{
+      position:absolute;
+      bottom:10px;
+      right:10px;
+      width:44px;
+      height:44px;
+      padding:0;
+      border:1px solid var(--accentBd);
+      border-radius:50%;
+      background:var(--accentBg);
+      color:var(--accent);
+      font-size:18px;
+      line-height:1;
+      cursor:pointer;
+      -webkit-user-select:none;
+      user-select:none;
+      transition:opacity 150ms;
+      z-index:2;
+    }
+    .btn-play:active{opacity:0.7}
+    .btn-play.playing{
+      border-color:var(--dangerBd);
+      background:var(--dangerBg);
+      color:var(--danger);
+    }
+
+    /* ===== Status text (standalone, no zone-label wrapper) ===== */
+    .status-text{
+      font-size:11px;
+      color:var(--muted);
+      padding:0 4px;
+      flex-shrink:0;
+      min-height:14px;
+    }
+
+    /* ===== Editable translated text ===== */
+    .translated[contenteditable="true"]{
+      cursor:text;
+      outline:none;
+      border-radius:8px;
+      padding:4px 6px;
+      margin:-4px -6px;
+      transition:background 150ms;
+    }
+    .translated[contenteditable="true"]:focus{
+      background:rgba(128,128,128,0.08);
+    }
+    .translated[contenteditable="true"]:empty::before{
+      content:"點此輸入文字…";
+      color:var(--muted);
+      opacity:0.4;
+      font-style:italic;
+      font-size:20px;
+      pointer-events:none;
+    }
+
+    /* Translate mode button */
+    .btn-mic.translate-mode{
+      border-color:var(--accentBd);
+      background:linear-gradient(135deg,rgba(110,231,183,0.20) 0%,rgba(110,231,183,0.10) 100%);
+      color:var(--accent);
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .btn-mic.recording,.btn-mic.mic-pending,.display.recording-active{animation:none}
+      .display.loading .translated::before{animation:none;opacity:0.5}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Settings overlay -->
+  <div class="overlay" id="settingsOverlay" aria-hidden="true">
+    <div class="settings-modal" role="dialog" aria-modal="true">
+      <div class="settings-header">
+        <div class="settings-title">設定</div>
+        <button class="modal-close" id="btnCloseSettings">關閉</button>
+      </div>
+      <div class="settings-prompt" id="settingsPrompt">請輸入 OpenAI API Key</div>
+      <div class="field">
+        <label for="apiKey">OpenAI API Key</label>
+        <input class="in" id="apiKey" type="password" placeholder="sk-…" autocomplete="off" />
+        <div class="hint"><a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener">還沒有 API Key？前往 OpenAI 申請 →</a></div>
+      </div>
+      <button class="btn-verify" id="btnVerify" disabled>
+        <span class="verify-dot"></span>
+        <span class="verify-label">驗證連線</span>
+      </button>
+      <div class="verify-result" id="verifyResult"></div>
+    </div>
+  </div>
+
+  <!-- Log & Summary overlay -->
+  <div class="overlay" id="summaryOverlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-header">
+        <div class="modal-title">對話紀錄</div>
+        <span class="log-count-header" id="logCount">(0)</span>
+        <span style="flex:1"></span>
+        <button class="modal-close" id="btnCloseSummary">關閉</button>
+      </div>
+      <div class="modal-body" id="logBody">
+        <div class="log-list" id="logList">
+          <div class="log-empty" id="logEmpty">尚無對話紀錄</div>
+        </div>
+        <div class="summary-section" id="summarySection" style="display:none">
+          <div class="summary-divider">── 會議摘要 ──</div>
+          <div class="summary-content" id="summaryContent"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-summary-gen" id="btnGenSummary">📋 產生摘要</button>
+        <button class="btn-summary-copy" id="btnCopySummary">複製摘要</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <!-- Top bar -->
+    <div class="toprow">
+      <span class="app-title">会議翻譯</span>
+      <button class="icon" id="btnTtsToggle" title="朗讀開關" aria-label="朗讀開關">🔊</button>
+      <button class="icon" id="btnSummary" title="對話紀錄與摘要" aria-label="對話紀錄與摘要">📋</button>
+      <button class="icon" id="btnClearAll" title="清除全部" aria-label="清除全部">🗑</button>
+      <span style="flex:1"></span>
+      <button class="icon" id="btnTheme" title="切換主題" aria-label="切換主題">◑</button>
+      <button class="icon" id="btnSettings" title="設定" aria-label="設定">⚙</button>
+    </div>
+
+    <!-- ===== VIE Zone (rotated 180°) ===== -->
+    <!-- HTML order is same as TW zone; rotate(180°) mirrors it for VIE reader -->
+    <div class="zone zone-jp" id="zoneVie">
+      <span class="status-text" id="statusVie"></span>
+      <div class="display" id="displayVie">
+        <div class="translated" id="translatedVie"></div>
+        <div class="original" id="originalVie"></div>
+        <div class="placeholder" id="placeholderVie">等待 VIE 發言…</div>
+        <button class="btn-play" id="btnPlayVie" style="display:none">🔊</button>
+      </div>
+      <button class="btn-mic" id="btnMicVie">VIE 發言</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ===== TW Zone ===== -->
+    <div class="zone" id="zoneTw">
+      <span class="status-text" id="statusTw"></span>
+      <div class="display" id="displayTw">
+        <div class="placeholder" id="placeholderTw">等待 TW 發言…</div>
+        <div class="original" id="originalTw"></div>
+        <div class="translated" id="translatedTw"></div>
+        <button class="btn-play" id="btnPlayTw" style="display:none">🔊</button>
+      </div>
+      <button class="btn-mic" id="btnMicTw">TW 發言</button>
+    </div>
+
+    <!-- Toolbar buttons moved to top bar -->
+  </div>
+
+  <div id="toastHost"></div>
+
+  <script>
+    // ========== Configuration ==========
+    const CONFIG = {
+      TEMP_TRANSLATE: 0.1,
+      TEMP_REFINE: 0.4,
+      API_BASE: 'https://api.openai.com/v1',
+      TTS_BASE: 'https://api.openai.com/v1/audio/speech',
+      TTS_VOICE: 'nova',
+      USE_OPENAI_TTS: true,  // Vietnamese browser TTS is poor; OpenAI TTS preferred, browser fallback
+      TTS_TIMEOUT_MIN_MS: 15000,
+      TOAST_MS: 3000,
+      TOAST_COOLDOWN_MS: 800,
+      STREAM_READ_TIMEOUT_MS: 30000,
+      MIC_COOLDOWN_MS: 800,
+      MAX_RECORDING_MS: 120000,
+      MAX_LOG_ENTRIES: 200,
+      SUMMARY_TIMEOUT_MS: 45000,
+      MIC_SWITCH_DELAY_MS: 500,
+      MIC_SAFETY_TIMEOUT_MS: 5000,
+      SETTINGS_AUTO_OPEN_DELAY_MS: 400,
+    };
+
+    function isMobile() {
+      return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+        || (navigator.maxTouchPoints > 1 && /Macintosh/.test(navigator.userAgent));
+    }
+
+    const STORAGE_KEYS = {
+      API_KEY: 'meeting_api_key',
+      THEME: 'meeting_theme',
+      TTS_ON: 'meeting_tts_on',
+    };
+
+    const TRANSLATE_MODEL = 'gpt-5.4-mini';
+    const TRANSLATE_FALLBACK = [TRANSLATE_MODEL, 'gpt-5.4-nano', 'gpt-4o'];
+    const REFINE_FALLBACK = ['gpt-5.4', TRANSLATE_MODEL, 'gpt-4o'];
+    const SUMMARY_MODEL_FALLBACK = ['gpt-5.4', TRANSLATE_MODEL, 'gpt-4o'];
+
+    const LANG = {
+      'zh-TW': {
+        display: '中文',
+        speaker: 'TW',
+        ttsLocal: 'zh-TW',
+        recogLang: 'zh-TW',
+        ttsVolume: 0.8,
+        promptName: '繁體中文（台灣）',
+        translateExtra: '\n用詞以台灣常用說法，避免簡體用語，標點採全形。口吻自然。',
+      },
+      'vi': {
+        display: 'Tiếng Việt',
+        speaker: 'VIE',
+        ttsLocal: 'vi-VN',
+        recogLang: 'vi-VN',
+        ttsVolume: 1.0,
+        promptName: 'Tiếng Việt',
+        translateExtra: '\nDịch tự nhiên, phù hợp với văn phong lịch sự trong cuộc họp kinh doanh tại Việt Nam. Không dịch từng chữ.',
+      },
+    };
+
+    // ========== Helpers ==========
+    function lsGet(k, fb) { try { return localStorage.getItem(k) ?? fb; } catch { return fb; } }
+    function lsSet(k, v) { try { localStorage.setItem(k, v); } catch {} }
+    function isAbortError(e) { return e && (e.name === 'AbortError' || e.code === 20); }
+    function makeAbortError() {
+      try { return new DOMException('Aborted', 'AbortError'); }
+      catch {
+        const err = new Error('Aborted');
+        err.name = 'AbortError';
+        return err;
+      }
+    }
+    async function safeReadText(res) { try { return await res.text(); } catch { return ''; } }
+    async function readStreamChunk(reader, timeoutMs) {
+      let timeoutId = null;
+      try {
+        return await Promise.race([
+          reader.read(),
+          new Promise((_, rej) => {
+            timeoutId = setTimeout(() => rej(new Error('Stream timeout')), timeoutMs);
+          }),
+        ]);
+      } finally {
+        if (timeoutId) clearTimeout(timeoutId);
+      }
+    }
+    function isInvalidModelError(status, body) {
+      const t = (body || '').toLowerCase();
+      return status === 404 || /invalid_model|model.*not found|no such model|unknown model/.test(t);
+    }
+
+    // ========== State ==========
+    const state = {
+      apiKey: (lsGet(STORAGE_KEYS.API_KEY, '') || '').trim(),
+      theme: lsGet(STORAGE_KEYS.THEME, 'dark'),
+      ttsOn: lsGet(STORAGE_KEYS.TTS_ON, '1') === '1',
+      busy: false,
+      controller: null,
+      // TTS
+      speakGeneration: 0,
+      speaking: false,
+      audioEl: null,
+      audioUrl: null,
+      ttsTimeout: null,
+      ttsController: null,
+      // Mic
+      lastTtsEndedAt: 0,
+      lastMicEndedAt: 0,
+      // Conversation log: [{speaker:'TW'|'VIE', original, translated, time}]
+      log: [],
+      summaryController: null,
+      summaryRequestId: 0,
+      // Edit mode
+      editModeTw: false,
+      editModeVie: false,
+    };
+
+    // ========== DOM ==========
+    const $ = id => document.getElementById(id);
+    const el = {
+      settingsOverlay: $('settingsOverlay'),
+      btnSettings: $('btnSettings'),
+      btnCloseSettings: $('btnCloseSettings'),
+      apiKey: $('apiKey'),
+      btnVerify: $('btnVerify'),
+      verifyResult: $('verifyResult'),
+      settingsPrompt: $('settingsPrompt'),
+      btnTheme: $('btnTheme'),
+      // Zones
+      btnMicTw: $('btnMicTw'),
+      btnMicVie: $('btnMicVie'),
+      displayTw: $('displayTw'),
+      displayVie: $('displayVie'),
+      translatedTw: $('translatedTw'),
+      translatedVie: $('translatedVie'),
+      originalTw: $('originalTw'),
+      originalVie: $('originalVie'),
+      placeholderTw: $('placeholderTw'),
+      placeholderVie: $('placeholderVie'),
+      statusTw: $('statusTw'),
+      statusVie: $('statusVie'),
+      btnPlayTw: $('btnPlayTw'),
+      btnPlayVie: $('btnPlayVie'),
+      // Log
+      logList: $('logList'),
+      logCount: $('logCount'),
+      logEmpty: $('logEmpty'),
+      // Toolbar
+      btnTtsToggle: $('btnTtsToggle'),
+      btnSummary: $('btnSummary'),
+      btnClearAll: $('btnClearAll'),
+      // Summary
+      summaryOverlay: $('summaryOverlay'),
+      btnCloseSummary: $('btnCloseSummary'),
+      summaryContent: $('summaryContent'),
+      btnGenSummary: $('btnGenSummary'),
+      btnCopySummary: $('btnCopySummary'),
+    };
+
+    // Init
+    el.apiKey.value = state.apiKey;
+
+    // ========== Markdown renderer (summary) ==========
+    function renderMarkdownToHtml(md) {
+      if (!md) return '';
+      const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      const lines = md.split('\n');
+      let html = '', inUl = false, inTable = false, inTbody = false;
+
+      function closeLists() {
+        if (inUl) { html += '</ul>'; inUl = false; }
+        if (inTable) { if (inTbody) { html += '</tbody>'; inTbody = false; } html += '</table>'; inTable = false; }
+      }
+
+      for (let i = 0; i < lines.length; i++) {
+        const raw = lines[i];
+        const line = raw.trim();
+        if (!line) { closeLists(); continue; }
+
+        // Heading ###
+        const hm = line.match(/^(#{1,4})\s+(.+)$/);
+        if (hm) { closeLists(); html += `<h3>${inline(esc(hm[2]))}</h3>`; continue; }
+
+        // Table row
+        if (line.startsWith('|') && line.endsWith('|')) {
+          const cells = line.slice(1, -1).split('|').map(c => c.trim());
+          if (cells.every(c => /^[-:]+$/.test(c))) continue;
+          if (!inTable) {
+            closeLists();
+            html += '<table><thead><tr>' + cells.map(c => `<th>${inline(esc(c))}</th>`).join('') + '</tr></thead>';
+            inTable = true;
+            continue;
+          }
+          if (!inTbody) { html += '<tbody>'; inTbody = true; }
+          html += '<tr>' + cells.map(c => `<td>${inline(esc(c))}</td>`).join('') + '</tr>';
+          continue;
+        }
+
+        // Unordered list
+        const lm = line.match(/^[-*]\s+(.+)$/);
+        if (lm) {
+          if (inTable) { if (inTbody) { html += '</tbody>'; inTbody = false; } html += '</table>'; inTable = false; }
+          if (!inUl) { html += '<ul>'; inUl = true; }
+          html += `<li>${inline(esc(lm[1]))}</li>`;
+          continue;
+        }
+
+        // Paragraph
+        closeLists();
+        html += `<p>${inline(esc(line))}</p>`;
+      }
+      closeLists();
+      return html;
+    }
+    function inline(s) {
+      return s.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    }
+
+    // ========== Toast ==========
+    const toastHost = $('toastHost');
+    let _lastToastMsg = '', _lastToastTime = 0;
+    function toast(msg, type, durationMs) {
+      const now = Date.now();
+      if (msg === _lastToastMsg && (now - _lastToastTime) < CONFIG.TOAST_COOLDOWN_MS) return;
+      _lastToastMsg = msg; _lastToastTime = now;
+      const item = document.createElement('div');
+      item.className = 'toast-item' + (type ? ' toast-' + type : '');
+      item.textContent = msg;
+      toastHost.appendChild(item);
+      requestAnimationFrame(() => requestAnimationFrame(() => item.classList.add('show')));
+      const dismiss = () => { item.classList.remove('show'); item.classList.add('out'); setTimeout(() => item.remove(), 200); };
+      item.addEventListener('click', dismiss);
+      setTimeout(dismiss, durationMs || CONFIG.TOAST_MS);
+    }
+    function toastError(msg) { toast(msg, 'error', 5000); }
+
+    function clearTranslationUi() {
+      el.displayTw.classList.remove('loading');
+      el.displayVie.classList.remove('loading');
+      el.statusTw.textContent = '';
+      el.statusVie.textContent = '';
+    }
+
+    // Keep both audience panels synchronized: each side sees its own language large
+    // and the counterpart language as supporting text.
+    function syncConversationPanels(speaker, sourceText, translatedText) {
+      const source = sourceText || '';
+      const translated = translatedText || '';
+      if (speaker === 'TW') {
+        el.translatedTw.textContent = source;
+        el.originalTw.textContent = translated;
+        el.originalVie.textContent = source;
+        el.translatedVie.textContent = translated;
+      } else {
+        el.translatedVie.textContent = source;
+        el.originalVie.textContent = translated;
+        el.originalTw.textContent = source;
+        el.translatedTw.textContent = translated;
+      }
+    }
+
+    function getDisplayForLang(lang) {
+      return lang === 'zh-TW' ? el.displayTw : el.displayVie;
+    }
+
+    function clearAudioObjectUrl() {
+      if (state.audioUrl) {
+        URL.revokeObjectURL(state.audioUrl);
+        state.audioUrl = null;
+      }
+    }
+
+    function createAudioFromBuffer(buf) {
+      clearAudioObjectUrl();
+      state.audioUrl = URL.createObjectURL(new Blob([buf], { type: 'audio/mpeg' }));
+      return new Audio(state.audioUrl);
+    }
+
+    function abortSummary() {
+      if (state.summaryController) {
+        try { state.summaryController.abort(); } catch {}
+        state.summaryController = null;
+      }
+    }
+
+    // ========== Theme ==========
+    function applyTheme(t) {
+      state.theme = t;
+      document.documentElement.setAttribute('data-theme', t);
+      lsSet(STORAGE_KEYS.THEME, t);
+      el.btnTheme.textContent = t === 'dark' ? '◑' : '◐';
+    }
+    el.btnTheme.addEventListener('click', () => applyTheme(state.theme === 'dark' ? 'light' : 'dark'));
+    applyTheme(state.theme);
+
+    // ========== TTS Toggle ==========
+    function updateTtsBtn() {
+      el.btnTtsToggle.textContent = state.ttsOn ? '🔊' : '🔇';
+      el.btnTtsToggle.classList.toggle('active', state.ttsOn);
+    }
+    el.btnTtsToggle.addEventListener('click', () => {
+      state.ttsOn = !state.ttsOn;
+      lsSet(STORAGE_KEYS.TTS_ON, state.ttsOn ? '1' : '0');
+      updateTtsBtn();
+      if (!state.ttsOn) stopSpeaking();
+      toast(state.ttsOn ? '朗讀已開啟' : '朗讀已關閉');
+    });
+    updateTtsBtn();
+
+    // ========== Play buttons (manual TTS — OpenAI HD priority) ==========
+    function setPlayBtnsStop() {
+      el.btnPlayTw.textContent = '⏹';
+      el.btnPlayVie.textContent = '⏹';
+      el.btnPlayTw.classList.add('playing');
+      el.btnPlayVie.classList.add('playing');
+    }
+    function setPlayBtnsReady() {
+      el.btnPlayTw.textContent = '🔊';
+      el.btnPlayVie.textContent = '🔊';
+      el.btnPlayTw.classList.remove('playing');
+      el.btnPlayVie.classList.remove('playing');
+    }
+
+    // Core TTS playback logic shared by handlePlayBtn and speak.
+    // openAiFirst: true = try OpenAI before browser; false = browser first.
+    // afterDone: optional callback after TTS finishes.
+    async function playTtsCore(text, lang, { openAiFirst = false, afterDone } = {}) {
+      const localLang = LANG[lang].ttsLocal;
+      const gen = ++state.speakGeneration;
+      state.speaking = true;
+
+      const display = getDisplayForLang(lang);
+      display.classList.add('speaking-glow');
+
+      const onDone = () => {
+        if (gen !== state.speakGeneration) return;
+        if (state.ttsTimeout) { clearTimeout(state.ttsTimeout); state.ttsTimeout = null; }
+        display.classList.remove('speaking-glow');
+        state.speaking = false;
+        state.audioEl = null;
+        state.ttsController = null;
+        clearAudioObjectUrl();
+        state.lastTtsEndedAt = Date.now();
+        if (afterDone) afterDone();
+      };
+
+      const charMs = /[\u3040-\u9fff]/.test(text) ? 120 : 80;
+      const dynamicTimeout = Math.max(CONFIG.TTS_TIMEOUT_MIN_MS, text.length * charMs);
+      const ttsAc = new AbortController();
+      state.ttsController = ttsAc;
+
+      const tryOpenAi = async () => {
+        if (!CONFIG.USE_OPENAI_TTS || !state.apiKey) return false;
+        try {
+          const res = await fetch(CONFIG.TTS_BASE, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${state.apiKey}` },
+            body: JSON.stringify({ model: 'tts-1', input: text, voice: CONFIG.TTS_VOICE, response_format: 'mp3' }),
+            signal: ttsAc.signal,
+          });
+          if (res.ok) {
+            const buf = await res.arrayBuffer();
+            const audio = createAudioFromBuffer(buf);
+            state.audioEl = audio;
+            audio.onended = onDone;
+            audio.onerror = onDone;
+            await audio.play();
+            const dur = isFinite(audio.duration) ? audio.duration * 1000 : dynamicTimeout;
+            state.ttsTimeout = setTimeout(() => { if (state.speaking) stopSpeaking(); }, dur + 5000);
+            return true;
+          }
+        } catch (e) {
+          if (ttsAc.signal.aborted) return true; // aborted, don't fallback
+        }
+        return false;
+      };
+
+      const tryBrowser = () => {
+        if (!('speechSynthesis' in window)) return false;
+        try {
+          speechSynthesis.cancel();
+          const u = new SpeechSynthesisUtterance(text);
+          u.lang = localLang;
+          u.volume = LANG[lang]?.ttsVolume ?? 1.0;
+          if (voiceCache[localLang]) u.voice = voiceCache[localLang];
+          u.onend = onDone;
+          u.onerror = onDone;
+          speechSynthesis.speak(u);
+          state.ttsTimeout = setTimeout(() => { if (state.speaking) stopSpeaking(); }, dynamicTimeout * 3);
+          return true;
+        } catch {}
+        return false;
+      };
+
+      const first = openAiFirst ? tryOpenAi : tryBrowser;
+      const second = openAiFirst ? tryBrowser : tryOpenAi;
+      if (await first()) return;
+      if (await second()) return;
+      onDone();
+    }
+
+    async function handlePlayBtn(btn) {
+      if (!btn._ttsText || !btn._ttsLang) return;
+      if (state.speaking) { stopSpeaking(); setPlayBtnsReady(); return; }
+      setPlayBtnsStop();
+      await playTtsCore(btn._ttsText, btn._ttsLang, {
+        openAiFirst: true,
+        afterDone: setPlayBtnsReady,
+      });
+    }
+    el.btnPlayTw.addEventListener('click', () => handlePlayBtn(el.btnPlayTw));
+    el.btnPlayVie.addEventListener('click', () => handlePlayBtn(el.btnPlayVie));
+
+    // ========== Overlay helper ==========
+    function toggleOverlay(overlay, show) {
+      overlay.classList.toggle('show', !!show);
+      overlay.setAttribute('aria-hidden', show ? 'false' : 'true');
+    }
+
+    // ========== Settings ==========
+    el.btnSettings.addEventListener('click', () => openSettings(true));
+    el.btnCloseSettings.addEventListener('click', () => openSettings(false));
+    el.settingsOverlay.addEventListener('click', e => { if (e.target === el.settingsOverlay) openSettings(false); });
+
+    function openSettings(show) {
+      toggleOverlay(el.settingsOverlay, show);
+      if (show) {
+        el.apiKey.focus();
+        el.verifyResult.textContent = '';
+        el.verifyResult.className = 'verify-result';
+        el.settingsPrompt.style.display = state.apiKey ? 'none' : '';
+      } else {
+        lsSet(STORAGE_KEYS.API_KEY, state.apiKey);
+      }
+    }
+    el.apiKey.addEventListener('input', e => {
+      state.apiKey = e.target.value.trim();
+      el.btnVerify.disabled = !state.apiKey;
+      el.verifyResult.textContent = '';
+      el.verifyResult.className = 'verify-result';
+    });
+    el.apiKey.addEventListener('blur', () => lsSet(STORAGE_KEYS.API_KEY, state.apiKey));
+
+    el.btnVerify.addEventListener('click', async () => {
+      if (!state.apiKey) return;
+      el.btnVerify.classList.add('verifying');
+      el.btnVerify.querySelector('.verify-label').textContent = '驗證中…';
+      el.verifyResult.textContent = '';
+      el.verifyResult.className = 'verify-result';
+      const verifyAc = new AbortController();
+      const verifyTimeout = setTimeout(() => verifyAc.abort(), 15000);
+      try {
+        const res = await fetch('https://api.openai.com/v1/models', {
+          headers: { 'Authorization': `Bearer ${state.apiKey}` },
+          signal: verifyAc.signal,
+        });
+        if (res.ok) {
+          el.verifyResult.textContent = '✓ 連線成功';
+          el.verifyResult.className = 'verify-result success';
+          lsSet(STORAGE_KEYS.API_KEY, state.apiKey);
+          setTimeout(() => openSettings(false), 800);
+        } else {
+          const msg = res.status === 401 ? 'API Key 無效' : `錯誤 (${res.status})`;
+          el.verifyResult.textContent = '✗ ' + msg;
+          el.verifyResult.className = 'verify-result fail';
+        }
+      } catch (e) {
+        const msg = isAbortError(e) ? '驗證逾時，請檢查網路後再試' : '網路連線失敗';
+        el.verifyResult.textContent = '✗ ' + msg;
+        el.verifyResult.className = 'verify-result fail';
+      } finally {
+        clearTimeout(verifyTimeout);
+        el.btnVerify.classList.remove('verifying');
+        el.btnVerify.querySelector('.verify-label').textContent = '驗證連線';
+      }
+    });
+
+    // ========== TTS ==========
+    const voiceCache = {};
+    function updateVoiceCache() {
+      if (!('speechSynthesis' in window)) return;
+      const voices = speechSynthesis.getVoices();
+      for (const locale of ['zh-TW', 'vi-VN']) {
+        voiceCache[locale] = voices.find(v => v.lang === locale && v.name.includes('Google'))
+          || voices.find(v => v.lang === locale)
+          || voices.find(v => v.lang.startsWith(locale.split('-')[0]))
+          || null;
+      }
+    }
+    if ('speechSynthesis' in window) {
+      updateVoiceCache();
+      speechSynthesis.addEventListener('voiceschanged', updateVoiceCache);
+    }
+
+    async function speak(text, lang) {
+      if (!text?.trim() || !state.ttsOn) return;
+      if (state.speaking) stopSpeaking();
+      if ('speechSynthesis' in window) speechSynthesis.cancel();
+      await playTtsCore(text, lang, { openAiFirst: true });
+    }
+
+    function stopSpeaking() {
+      const hadTtsActivity = state.speaking || !!state.audioEl || ('speechSynthesis' in window && speechSynthesis.speaking);
+      if (state.ttsTimeout) { clearTimeout(state.ttsTimeout); state.ttsTimeout = null; }
+      if (state.ttsController) { state.ttsController.abort(); state.ttsController = null; }
+      if (state.audioEl) {
+        state.audioEl.onended = null; state.audioEl.onerror = null;
+        state.audioEl.pause(); state.audioEl.currentTime = 0; state.audioEl = null;
+      }
+      clearAudioObjectUrl();
+      if ('speechSynthesis' in window) speechSynthesis.cancel();
+      el.displayTw.classList.remove('speaking-glow');
+      el.displayVie.classList.remove('speaking-glow');
+      state.speaking = false;
+      if (hadTtsActivity) state.lastTtsEndedAt = Date.now();
+      setPlayBtnsReady();
+    }
+
+    // ========== Translation ==========
+    function buildSystemPrompt(tgtLang) {
+      const lang = LANG[tgtLang];
+      return `You are a professional interpreter for business meetings between Traditional Chinese (Taiwan) and Vietnamese.
+- Output: ${lang.promptName} only.
+- Keep meaning exact; no added or missing information.
+- Use polite, natural language suitable for business meetings.
+- Preserve: numbers, dates, proper nouns, company names.
+- Do not include explanations—return translation only.${lang.translateExtra}`;
+    }
+
+    function buildRefineSystemPrompt(tgtLang) {
+      const extra = {
+        'vi': `\n- Sử dụng ngôn ngữ lịch sự, tự nhiên như người Việt thường dùng trong họp kinh doanh.\n- Loại bỏ các cách diễn đạt dịch máy không tự nhiên.\n- Giữ nguyên thuật ngữ chuyên ngành và tên riêng.`,
+        'zh-TW': `\n- 用詞必須是台灣人日常口語說法，不可出現中國大陸用語。\n- 標點全形，語氣自然。`,
+      };
+      return `You are a world-class bilingual editor (Traditional Chinese ↔ Vietnamese) specializing in business meeting interpretation.
+Your task: revise a machine-translated draft to reach native-speaker quality.
+- Keep all original meaning 100% intact.
+- Preserve: numbers, dates, proper nouns, company names.
+- The output must read as if originally spoken by a native speaker.
+- Match appropriate formality for business meetings.${extra[tgtLang] || ''}`;
+    }
+
+    const _modelCache = {}; // { translate: 'gpt-...', refine: 'gpt-...' }
+    const _translateCache = new Map(); // key: 'srcLang|tgtLang|text' → translated
+    const _TRANSLATE_CACHE_MAX = 100;
+    function modelChain(type) {
+      const chain = type === 'refine' ? REFINE_FALLBACK : TRANSLATE_FALLBACK;
+      // If we have a cached working model, put it first
+      if (_modelCache[type] && chain.includes(_modelCache[type])) {
+        return [_modelCache[type], ...chain.filter(m => m !== _modelCache[type])];
+      }
+      return chain;
+    }
+
+    // Shared non-streaming API call with model fallback.
+    // If `fallback` is provided, returns it on error instead of throwing.
+    // `cacheKey` — if set, caches the successful model in _modelCache.
+    async function callChatApi({ messages, temperature, models, signal, fallback, cacheKey }) {
+      for (const model of models) {
+        try {
+          const res = await fetch(`${CONFIG.API_BASE}/chat/completions`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${state.apiKey}` },
+            body: JSON.stringify({ model, temperature, messages }),
+            signal,
+          });
+          if (!res.ok) {
+            const t = await safeReadText(res);
+            if (isInvalidModelError(res.status, t)) continue;
+            if (fallback !== undefined) return fallback;
+            throw new Error(t || `HTTP ${res.status}`);
+          }
+          if (cacheKey) _modelCache[cacheKey] = model;
+          const json = await res.json();
+          return (json?.choices?.[0]?.message?.content || '').trim() || (fallback !== undefined ? fallback : '');
+        } catch (e) {
+          if (isAbortError(e)) throw e;
+          if (fallback !== undefined) return fallback;
+          throw e;
+        }
+      }
+      if (fallback !== undefined) return fallback;
+      throw new Error('No available model');
+    }
+
+    /*
+     * Translation pipeline (3 stages):
+     *  1. preEditSource  — 清理語音辨識產物（贅字、斷句），不改語意
+     *  2. translateText   — 串流翻譯（streaming），即時顯示結果
+     *  3. refineTranslation — 背景潤稿，完成後更新 UI；桌面版在此階段後才朗讀
+     *
+     * 呼叫順序見 handleUtterance()
+     */
+    async function translateText(text, srcLang, tgtLang, signal) {
+      const makeBody = model => ({
+        model, stream: true, temperature: CONFIG.TEMP_TRANSLATE,
+        messages: [
+          { role: 'system', content: buildSystemPrompt(tgtLang) },
+          { role: 'user', content: `Translate from ${srcLang} to ${tgtLang}. Return only the translation.\n\nSOURCE:\n${text}` },
+        ],
+      });
+
+      let res = null, lastText = '', usedModel = '';
+      for (const model of modelChain('translate')) {
+        res = await fetch(`${CONFIG.API_BASE}/chat/completions`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${state.apiKey}` },
+          body: JSON.stringify(makeBody(model)),
+          signal,
+        });
+        if (res.ok && res.body) { usedModel = model; break; }
+        lastText = await safeReadText(res);
+        if (!isInvalidModelError(res.status, lastText)) break;
+      }
+
+      if (!res || !res.ok || !res.body) {
+        const msg = lastText || `HTTP ${res?.status || 0}`;
+        if (/401|unauthorized|invalid api key/i.test(msg)) throw new Error('API Key 無效');
+        if (/429|rate limit/i.test(msg)) throw new Error('請求太頻繁，請稍後再試');
+        throw new Error(msg);
+      }
+
+      // Stream read
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder('utf-8');
+      let buffer = '', result = '';
+
+      try {
+        while (true) {
+          if (signal.aborted) throw makeAbortError();
+          const { value, done } = await readStreamChunk(reader, CONFIG.STREAM_READ_TIMEOUT_MS);
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          while (true) {
+            const nl = buffer.indexOf('\n');
+            if (nl < 0) break;
+            const line = buffer.slice(0, nl); buffer = buffer.slice(nl + 1);
+            const trimmed = line.trim();
+            if (!trimmed.startsWith('data:')) continue;
+            const data = trimmed.slice(5).trim();
+            if (!data || data === '[DONE]') continue;
+            try {
+              const delta = JSON.parse(data)?.choices?.[0]?.delta?.content || '';
+              if (delta) result += delta;
+            } catch {}
+          }
+        }
+        if (signal.aborted) throw makeAbortError();
+        // Flush residual
+        buffer += decoder.decode();
+        for (const line of buffer.split('\n')) {
+          const trimmed = line.trim();
+          if (!trimmed.startsWith('data:')) continue;
+          const data = trimmed.slice(5).trim();
+          if (!data || data === '[DONE]') continue;
+          try { result += JSON.parse(data)?.choices?.[0]?.delta?.content || ''; } catch {}
+        }
+        if (signal.aborted) throw makeAbortError();
+        if (usedModel) _modelCache.translate = usedModel;
+        return result.trim();
+      } catch (e) {
+        if (signal.aborted || isAbortError(e)) {
+          try { await reader.cancel(); } catch {}
+          throw makeAbortError();
+        }
+        if (e?.message === 'Stream timeout') {
+          try { await reader.cancel(); } catch {}
+        }
+        throw e;
+      } finally {
+        try { reader.releaseLock(); } catch {}
+      }
+    }
+
+    async function refineTranslation(source, draft, srcLang, tgtLang, signal) {
+      if (!draft?.trim()) return draft;
+      return callChatApi({
+        messages: [
+          { role: 'system', content: buildRefineSystemPrompt(tgtLang) },
+          { role: 'user', content: `Revise this translation to native-speaker quality.\n\nSource (${srcLang}):\n${source}\n\nDraft (${tgtLang}):\n${draft}\n\nReturn ONLY the improved translation.` },
+        ],
+        temperature: CONFIG.TEMP_REFINE,
+        models: modelChain('refine'),
+        signal,
+        fallback: draft,
+        cacheKey: 'refine',
+      });
+    }
+
+    // ========== Pre-edit source (clean up speech recognition artifacts) ==========
+    function buildPreEditPrompt(lang) {
+      const langName = LANG[lang].promptName;
+      return `You are a speech-to-text post-processor for ${langName}.
+The user dictated text via speech recognition in a business meeting. The raw transcript may contain:
+- Repeated words or phrases (user corrected themselves or repeated for clarity)
+- Filler words or meaningless fragments
+- Minor recognition errors
+
+Your task:
+- Remove obvious repetitions and filler
+- Fix minor recognition errors if the intended word is clear from context
+- Keep the original meaning 100% intact — do NOT rephrase, summarize, or add information
+- Keep the tone and formality level unchanged
+- If the text is already clean, return it as-is
+- Return ONLY the cleaned text, nothing else`;
+    }
+
+    async function preEditSource(text, lang, signal) {
+      if (!text?.trim()) return text;
+      return callChatApi({
+        messages: [
+          { role: 'system', content: buildPreEditPrompt(lang) },
+          { role: 'user', content: text },
+        ],
+        temperature: 0.1,
+        models: modelChain('translate'),
+        signal,
+        fallback: text,
+        cacheKey: 'translate',
+      });
+    }
+
+    // ========== Full translate + refine pipeline ==========
+    async function handleUtterance(speaker, text) {
+      if (!text?.trim()) return;
+      if (!state.apiKey) { toastError('請先點右上角 ⚙ 輸入 API Key'); return; }
+
+      // Abort any in-flight translation before starting new one
+      abortInFlight();
+
+      // Lock editing during translation
+      setEditable(false);
+      stopSpeaking();
+
+      const srcLang = speaker === 'TW' ? 'zh-TW' : 'vi';
+      const tgtLang = speaker === 'TW' ? 'vi' : 'zh-TW';
+
+      // Each zone always shows its OWN language as large text (.translated)
+      // and the OTHER language as small text (.original)
+      //
+      // VIE zone: translatedVie = Vietnamese (large), originalVie = Chinese (small)
+      // TW zone: translatedTw = Chinese    (large), originalTw = Vietnamese (small)
+
+      const listenerDisplayEl = speaker === 'TW' ? el.displayVie : el.displayTw;
+      const statusEl = speaker === 'TW' ? el.statusVie : el.statusTw;
+
+      // Hide placeholders
+      el.placeholderVie.style.display = 'none';
+      el.placeholderTw.style.display = 'none';
+      syncConversationPanels(speaker, text, '');
+
+      const speakerStatusEl = speaker === 'TW' ? el.statusTw : el.statusVie;
+      listenerDisplayEl.classList.add('loading');
+
+      const controller = new AbortController();
+      state.controller = controller;
+      state.busy = true;
+
+      try {
+        // Step 0: Pre-edit source (clean up speech recognition artifacts)
+        const rawText = text; // preserve raw speech recognition output
+        speakerStatusEl.textContent = '✎ 整理原文…';
+        statusEl.textContent = '';
+        try {
+          const edited = await preEditSource(text, srcLang, controller.signal);
+          if (!controller.signal.aborted && state.controller === controller && edited && edited !== text) {
+            text = edited;
+            syncConversationPanels(speaker, text, '');
+          }
+        } catch (e) {
+          if (isAbortError(e)) throw e;
+        }
+        if (controller.signal.aborted || state.controller !== controller) throw makeAbortError();
+        speakerStatusEl.textContent = '';
+
+        // Step 1: Translate (check cache first)
+        const cacheKey = `${srcLang}|${tgtLang}|${text.trim()}`;
+        let translated;
+        if (_translateCache.has(cacheKey)) {
+          translated = _translateCache.get(cacheKey);
+        } else {
+          statusEl.textContent = '翻譯中…';
+          translated = await translateText(text, srcLang, tgtLang, controller.signal);
+          // Store in cache (LRU eviction)
+          _translateCache.set(cacheKey, translated);
+          if (_translateCache.size > _TRANSLATE_CACHE_MAX) {
+            _translateCache.delete(_translateCache.keys().next().value);
+          }
+        }
+        if (controller.signal.aborted || state.controller !== controller) throw makeAbortError();
+        listenerDisplayEl.classList.remove('loading');
+        syncConversationPanels(speaker, text, translated);
+        statusEl.textContent = '';
+
+        // Immediately: log + TTS (don't wait for refine)
+        // Use rawText for log so original speech is preserved
+        addLogEntry(speaker, rawText, translated);
+        const logIdx = state.log.length - 1;
+
+        el.btnPlayTw._ttsText = translated;
+        el.btnPlayTw._ttsLang = tgtLang;
+        el.btnPlayVie._ttsText = translated;
+        el.btnPlayVie._ttsLang = tgtLang;
+
+        const wantTts = state.ttsOn && !controller.signal.aborted;
+        const mobile = isMobile();
+        if (wantTts && mobile) {
+          // Mobile: show play buttons (user triggers manually)
+          el.btnPlayTw.style.display = '';
+          el.btnPlayVie.style.display = '';
+        } else if (!wantTts || !mobile) {
+          el.btnPlayTw.style.display = 'none';
+          el.btnPlayVie.style.display = 'none';
+        }
+
+        // Step 2: Refine in background, then TTS with final text (desktop)
+        const refineSignal = controller.signal;
+        refineTranslation(text, translated, srcLang, tgtLang, refineSignal)
+          .then(refined => {
+            if (refineSignal.aborted) return;
+            const finalText = (refined && refined !== translated) ? refined : translated;
+            if (refined && refined !== translated) {
+              // Update UI
+              syncConversationPanels(speaker, text, refined);
+              // Update log entry
+              if (state.log[logIdx] && state.log[logIdx].translated === translated) {
+                state.log[logIdx].translated = refined;
+                const logEntry = el.logList.querySelectorAll('.log-entry')[logIdx];
+                if (logEntry) {
+                  const transEl = logEntry.querySelector('.log-translated');
+                  if (transEl) transEl.textContent = '\u2192 ' + refined;
+                }
+              }
+              // Update play button text
+              el.btnPlayTw._ttsText = refined;
+              el.btnPlayVie._ttsText = refined;
+            }
+            // Desktop auto-TTS: speak after refine completes (with best available text)
+            if (wantTts && !mobile && !refineSignal.aborted) {
+              speak(finalText, tgtLang);
+            }
+          })
+          .catch(e => {
+            if (!isAbortError(e)) console.warn('Refine failed:', e);
+            // Refine failed: still speak the initial translation on desktop
+            if (wantTts && !mobile && !refineSignal.aborted) {
+              speak(translated, tgtLang);
+            }
+          });
+
+      } catch (e) {
+        if (isAbortError(e)) return;
+        listenerDisplayEl.classList.remove('loading');
+        statusEl.textContent = '';
+        speakerStatusEl.textContent = '';
+        toastError(String(e?.message || e));
+      } finally {
+        if (state.controller === controller) {
+          clearTranslationUi();
+          state.busy = false;
+          state.controller = null;
+          setEditable(!activeRecognition);
+        }
+      }
+    }
+
+    function abortInFlight() {
+      if (state.controller) { try { state.controller.abort(); } catch {} state.controller = null; }
+      clearTranslationUi();
+      state.busy = false;
+      if (!activeRecognition) setEditable(true);
+    }
+
+    // ========== Conversation Log ==========
+    function addLogEntry(speaker, original, translated) {
+      abortSummary();
+      state.summaryRequestId += 1;
+      state.log.push({ speaker, original, translated, time: new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' }) });
+      // Trim oldest entries if over limit
+      while (state.log.length > CONFIG.MAX_LOG_ENTRIES) {
+        state.log.shift();
+        const oldest = el.logList.querySelector('.log-entry');
+        if (oldest) oldest.remove();
+      }
+      el.summaryContent.innerHTML = '';
+      $('summarySection').style.display = 'none';
+      el.btnGenSummary.disabled = false;
+      el.btnGenSummary.textContent = '📋 產生摘要';
+      renderLog();
+    }
+
+    function renderLog() {
+      el.logCount.textContent = `(${state.log.length})`;
+      if (state.log.length === 0) {
+        el.logEmpty.style.display = '';
+        return;
+      }
+      el.logEmpty.style.display = 'none';
+
+      // Only add newest entry (append)
+      const entry = state.log[state.log.length - 1];
+      const div = document.createElement('div');
+      div.className = 'log-entry';
+      const spk = document.createElement('div');
+      spk.className = 'log-speaker ' + entry.speaker.toLowerCase();
+      spk.textContent = entry.speaker + ' ' + entry.time;
+      const orig = document.createElement('div');
+      orig.className = 'log-original';
+      orig.textContent = entry.original;
+      const trans = document.createElement('div');
+      trans.className = 'log-translated';
+      trans.textContent = '\u2192 ' + entry.translated;
+      div.append(spk, orig, trans);
+      el.logList.appendChild(div);
+
+      // Auto scroll log body if overlay is open
+      const logBody = $('logBody');
+      if (el.summaryOverlay.classList.contains('show') && logBody) {
+        logBody.scrollTop = logBody.scrollHeight;
+      }
+    }
+
+
+
+    // ========== Editable Text ==========
+    function setEditable(enabled) {
+      const val = enabled ? 'true' : 'false';
+      el.translatedTw.setAttribute('contenteditable', val);
+      el.translatedVie.setAttribute('contenteditable', val);
+      if (!enabled) {
+        // Exit edit mode when locked
+        exitEditMode('TW');
+        exitEditMode('VIE');
+      }
+    }
+
+    const _editCfg = {
+      TW: { stateKey: 'editModeTw', btn: () => el.btnMicTw },
+      VIE: { stateKey: 'editModeVie', btn: () => el.btnMicVie },
+    };
+
+    function micLabel(speaker) {
+      return SpeechRecognition ? `${speaker} 發言` : `${speaker} 輸入`;
+    }
+
+    function enterEditMode(speaker) {
+      const cfg = _editCfg[speaker];
+      if (state[cfg.stateKey]) return;
+      state[cfg.stateKey] = true;
+      cfg.btn().classList.add('translate-mode');
+      cfg.btn().textContent = '翻譯';
+    }
+
+    function exitEditMode(speaker) {
+      const cfg = _editCfg[speaker];
+      if (!state[cfg.stateKey]) return;
+      state[cfg.stateKey] = false;
+      cfg.btn().classList.remove('translate-mode');
+      cfg.btn().textContent = micLabel(speaker);
+    }
+
+    function handleEditTranslate(speaker) {
+      const textEl = speaker === 'TW' ? el.translatedTw : el.translatedVie;
+      const text = (textEl.textContent || '').trim();
+      if (!text) {
+        toast('請先輸入文字');
+        return;
+      }
+      if (!state.apiKey) {
+        toastError('請先點右上角 ⚙ 輸入 API Key');
+        return;
+      }
+      handleUtterance(speaker, text);
+    }
+
+    // Force plain text on paste into contenteditable divs
+    function handlePaste(e) {
+      e.preventDefault();
+      const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+      document.execCommand('insertText', false, text);
+    }
+    el.translatedTw.addEventListener('paste', handlePaste);
+    el.translatedVie.addEventListener('paste', handlePaste);
+
+    // Listen for input events on translated divs
+    el.translatedTw.addEventListener('input', () => {
+      if (!activeRecognition && !state.busy) enterEditMode('TW');
+    });
+    el.translatedVie.addEventListener('input', () => {
+      if (!activeRecognition && !state.busy) enterEditMode('VIE');
+    });
+
+    // Also detect focus to show placeholder hint
+    el.translatedTw.addEventListener('focus', () => {
+      if (!activeRecognition && !state.busy) {
+        el.placeholderTw.style.display = 'none';
+      }
+    });
+    el.translatedVie.addEventListener('focus', () => {
+      if (!activeRecognition && !state.busy) {
+        el.placeholderVie.style.display = 'none';
+      }
+    });
+
+    // ========== Speech Recognition ==========
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let activeRecognition = null;
+    let activeMicSpeaker = null; // 'TW' | 'VIE'
+    let _micDelayTimer = null;
+    let _micMaxTimer = null;
+    // Mic permission is handled by the browser natively when SpeechRecognition.start() is called.
+    // Do NOT call getUserMedia() proactively — it causes a double-prompt on file:// protocol.
+
+    if (!SpeechRecognition) {
+      // Don't disable buttons — they're also used for typed-input translate mode.
+      // Instead, show hint text and block mic start in toggleMic/startMic.
+      el.btnMicTw.textContent = 'TW 輸入';
+      el.btnMicVie.textContent = 'VIE 輸入';
+      const isStandalone = window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
+      if (isStandalone && /iPhone|iPad|iPod/.test(navigator.userAgent)) {
+        toast('語音輸入需在 Safari 中使用，PWA 模式暫不支援');
+      } else {
+        toast('此瀏覽器不支援語音辨識，可手動輸入文字翻譯');
+      }
+    }
+
+    el.btnMicTw.addEventListener('click', () => toggleMic('TW'));
+    el.btnMicVie.addEventListener('click', () => toggleMic('VIE'));
+
+    function toggleMic(speaker) {
+      // If in edit/translate mode, trigger translation instead of mic
+      if ((speaker === 'TW' && state.editModeTw) || (speaker === 'VIE' && state.editModeVie)) {
+        handleEditTranslate(speaker);
+        return;
+      }
+
+      // No speech recognition: focus the input area so user can type
+      if (!SpeechRecognition) {
+        const textEl = speaker === 'TW' ? el.translatedTw : el.translatedVie;
+        textEl.focus();
+        return;
+      }
+
+      if (_micDelayTimer) { clearTimeout(_micDelayTimer); _micDelayTimer = null; }
+
+      if (activeRecognition && activeMicSpeaker === speaker) {
+        // Stop current
+        try { activeRecognition.stop(); } catch {}
+        return;
+      }
+      if (activeRecognition) {
+        // Stop current then start new
+        const pending = speaker;
+        try { activeRecognition.stop(); } catch {}
+        _micDelayTimer = setTimeout(() => { _micDelayTimer = null; startMic(pending); }, CONFIG.MIC_SWITCH_DELAY_MS);
+        return;
+      }
+      startMic(speaker);
+    }
+
+    async function startMic(speaker) {
+      if (!SpeechRecognition) return;
+      if (state.busy) {
+        toast('上一句仍在翻譯中，請稍候');
+        return;
+      }
+      stopSpeaking();
+      abortInFlight();
+
+      const now = Date.now();
+      const cooldown = CONFIG.MIC_COOLDOWN_MS - Math.min(now - state.lastTtsEndedAt, now - state.lastMicEndedAt);
+      if (cooldown > 0) {
+        _micDelayTimer = setTimeout(() => { _micDelayTimer = null; startMicCore(speaker); }, cooldown);
+        // Show pending immediately
+        const btn = speaker === 'TW' ? el.btnMicTw : el.btnMicVie;
+        btn.classList.add('mic-pending');
+        btn.textContent = '⏳ 等待中…';
+        return;
+      }
+      startMicCore(speaker);
+    }
+
+    function startMicCore(speaker) {
+      // Lock editing during recording
+      setEditable(false);
+
+      const lang = speaker === 'TW' ? 'zh-TW' : 'vi';
+      const recognition = new SpeechRecognition();
+      recognition.lang = LANG[lang].recogLang;
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.maxAlternatives = 1;
+
+      let finalTranscript = '';
+      let lastInterim = '';
+      let micGotEvent = false;
+      let micSafetyTimer = null;
+      let clearedTranscript = false;
+
+      const btn = speaker === 'TW' ? el.btnMicTw : el.btnMicVie;
+      const otherBtn = speaker === 'TW' ? el.btnMicVie : el.btnMicTw;
+      const display = speaker === 'TW' ? el.displayTw : el.displayVie;
+      const translatedEl = speaker === 'TW' ? el.translatedTw : el.translatedVie;
+      const placeholderEl = speaker === 'TW' ? el.placeholderTw : el.placeholderVie;
+
+      function showRecordingUI() {
+        if (btn.classList.contains('recording')) return;
+        btn.classList.remove('mic-pending');
+        btn.classList.add('recording');
+        otherBtn.classList.remove('recording', 'mic-pending');
+        btn.textContent = '⏹ 停止';
+        display.classList.add('recording-active');
+        // Hide play buttons during recording
+        el.btnPlayTw.style.display = 'none';
+        el.btnPlayVie.style.display = 'none';
+      }
+
+      function clearMicTimers() {
+        if (micSafetyTimer) { clearTimeout(micSafetyTimer); micSafetyTimer = null; }
+      }
+
+      recognition.onstart = () => {
+        micGotEvent = true;
+        clearMicTimers();
+        showRecordingUI();
+      };
+      recognition.onaudiostart = () => {
+        micGotEvent = true;
+        clearMicTimers();
+        showRecordingUI();
+      };
+
+      recognition.onresult = (event) => {
+        if (activeRecognition !== recognition) return; // stale instance guard
+        micGotEvent = true;
+        clearMicTimers();
+        if (!clearedTranscript) {
+          placeholderEl.style.display = 'none';
+          translatedEl.textContent = '';
+          clearedTranscript = true;
+        }
+        let interim = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const t = event.results[i][0].transcript;
+          if (event.results[i].isFinal) finalTranscript += t;
+          else interim += t;
+        }
+        lastInterim = interim;
+        translatedEl.textContent = finalTranscript + interim;
+      };
+
+      recognition.onerror = (event) => {
+        micGotEvent = true;
+        clearMicTimers();
+        if (event.error === 'aborted') return;
+        if (event.error === 'no-speech') toast('沒有偵測到語音，請再試一次');
+        else if (event.error === 'not-allowed') toastError('請允許麥克風權限');
+        else if (event.error === 'audio-capture') toastError('無法存取麥克風');
+        else toastError('語音辨識錯誤：' + event.error);
+        stopMic();
+      };
+
+      recognition.onend = () => {
+        clearMicTimers();
+        if (_micMaxTimer) { clearTimeout(_micMaxTimer); _micMaxTimer = null; }
+        if (activeRecognition !== recognition) return;
+        stopMic();
+        const text = (finalTranscript || lastInterim || '').trim();
+        if (text) handleUtterance(speaker, text);
+      };
+
+      activeRecognition = recognition;
+      activeMicSpeaker = speaker;
+
+      try {
+        recognition.start();
+      } catch (e) {
+        activeRecognition = null;
+        activeMicSpeaker = null;
+        if (!state.busy) setEditable(true);
+        toastError('無法啟動語音辨識：' + (e.message || e));
+        return;
+      }
+
+      micSafetyTimer = setTimeout(() => {
+        if (!micGotEvent && activeRecognition === recognition) {
+          toast('語音辨識無回應，請再試一次');
+          stopMic();
+        }
+      }, CONFIG.MIC_SAFETY_TIMEOUT_MS);
+
+      _micMaxTimer = setTimeout(() => {
+        if (activeRecognition === recognition) {
+          toast('已達最大錄音時間，自動停止');
+          try { recognition.stop(); } catch {}
+        }
+      }, CONFIG.MAX_RECORDING_MS);
+
+      btn.classList.add('mic-pending');
+      btn.textContent = '⏳ 等待中…';
+    }
+
+    function stopMic() {
+      if (_micDelayTimer) { clearTimeout(_micDelayTimer); _micDelayTimer = null; }
+      if (_micMaxTimer) { clearTimeout(_micMaxTimer); _micMaxTimer = null; }
+      if (activeRecognition) {
+        const rec = activeRecognition;
+        activeRecognition = null;
+        rec.onstart = rec.onaudiostart = rec.onresult = rec.onerror = rec.onend = null;
+        try { rec.stop(); } catch {}
+      }
+      el.btnMicTw.classList.remove('recording', 'mic-pending');
+      el.btnMicVie.classList.remove('recording', 'mic-pending');
+      el.btnMicTw.textContent = micLabel('TW');
+      el.btnMicVie.textContent = micLabel('VIE');
+      el.displayTw.classList.remove('recording-active');
+      el.displayVie.classList.remove('recording-active');
+      activeMicSpeaker = null;
+      state.lastMicEndedAt = Date.now();
+      if (!state.busy) setEditable(true);
+    }
+
+    // ========== Clear All ==========
+    el.btnClearAll.addEventListener('click', () => {
+      stopSpeaking();
+      stopMic();
+      abortInFlight();
+      abortSummary();
+      state.summaryRequestId += 1;
+      state.log = [];
+      el.logList.querySelectorAll('.log-entry').forEach(e => e.remove());
+      el.logEmpty.style.display = '';
+      el.logCount.textContent = '(0)';
+      el.translatedTw.textContent = '';
+      el.translatedVie.textContent = '';
+      el.originalTw.textContent = '';
+      el.originalVie.textContent = '';
+      el.placeholderTw.style.display = '';
+      el.placeholderVie.style.display = '';
+      el.statusTw.textContent = '';
+      el.statusVie.textContent = '';
+      el.btnPlayTw.style.display = 'none';
+      el.btnPlayVie.style.display = 'none';
+      el.summaryContent.innerHTML = '';
+      el.btnGenSummary.disabled = false;
+      el.btnGenSummary.textContent = '📋 產生摘要';
+      $('summarySection').style.display = 'none';
+      exitEditMode('TW');
+      exitEditMode('VIE');
+      setEditable(true);
+      toast('已清除所有紀錄');
+    });
+
+    // ========== Summary ==========
+    el.btnSummary.addEventListener('click', () => toggleOverlay(el.summaryOverlay, true));
+    el.btnCloseSummary.addEventListener('click', () => toggleOverlay(el.summaryOverlay, false));
+    el.summaryOverlay.addEventListener('click', e => {
+      if (e.target === el.summaryOverlay) toggleOverlay(el.summaryOverlay, false);
+    });
+
+    el.btnGenSummary.addEventListener('click', async () => {
+      if (state.log.length === 0) { toast('尚無對話紀錄可摘要'); return; }
+      if (!state.apiKey) { toastError('請先設定 API Key'); return; }
+
+      abortSummary();
+      const requestId = ++state.summaryRequestId;
+      const summaryController = new AbortController();
+      state.summaryController = summaryController;
+      const summaryTimeout = setTimeout(() => {
+        try { summaryController.abort(); } catch {}
+      }, CONFIG.SUMMARY_TIMEOUT_MS);
+
+      el.btnGenSummary.disabled = true;
+      el.btnGenSummary.textContent = '分析中…';
+      el.summaryContent.innerHTML = '';
+
+      const transcript = state.log.map(e => `[${e.time}] ${e.speaker}: ${e.original}\n    → ${e.translated}`).join('\n\n');
+
+      const systemPrompt = `你是一位專業的會議記錄秘書，精通繁體中文與越南文。
+請針對以下中越雙語會議對話紀錄，產生結構化的會議摘要。
+
+## 輸出格式（繁體中文）：
+
+### 會議摘要
+（3-5 句總結會議主題與結論）
+
+### 重點事項
+- （條列式重點，每項一行）
+
+### 待辦 / 提醒
+- （需要後續跟進的事項）
+- （約定的時間、地點、金額等具體資訊）
+
+### 關鍵詞彙對照
+| 中文 | 越文 | 備註 |
+（列出會議中出現的重要專有名詞或關鍵詞彙的中越對照）
+
+注意：
+- 摘要用繁體中文撰寫（台灣用語）
+- 保留所有具體數字、日期、人名、地名
+- 如有未解決的分歧或疑問，特別標示`;
+
+      try {
+        const result = await callChatApi({
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: `以下是會議對話紀錄：\n\n${transcript}` },
+          ],
+          temperature: 0.3,
+          models: SUMMARY_MODEL_FALLBACK,
+          signal: summaryController.signal,
+          cacheKey: 'refine',
+        });
+        if (summaryController.signal.aborted || state.summaryController !== summaryController || state.summaryRequestId !== requestId) {
+          throw makeAbortError();
+        }
+        el.summaryContent.innerHTML = result ? renderMarkdownToHtml(result) : '（無法產生摘要）';
+        $('summarySection').style.display = '';
+        // Scroll to summary
+        const logBody = $('logBody');
+        if (logBody) logBody.scrollTop = logBody.scrollHeight;
+      } catch (e) {
+        if (isAbortError(e)) return;
+        toastError('摘要產生失敗：' + (e?.message || e));
+      } finally {
+        clearTimeout(summaryTimeout);
+        if (state.summaryController === summaryController) {
+          state.summaryController = null;
+          el.btnGenSummary.disabled = false;
+          el.btnGenSummary.textContent = '📋 產生摘要';
+        }
+      }
+    });
+
+    el.btnCopySummary.addEventListener('click', async () => {
+      const text = el.summaryContent.textContent.trim();
+      if (!text) { toast('尚無摘要可複製'); return; }
+      try {
+        await navigator.clipboard.writeText(text);
+        toast('已複製摘要');
+      } catch { toast('複製失敗'); }
+    });
+
+    // ========== Cleanup ==========
+    window.addEventListener('beforeunload', () => {
+      stopMic();
+      if (state.controller) try { state.controller.abort(); } catch {}
+      abortSummary();
+      if (state.ttsController) try { state.ttsController.abort(); } catch {}
+      if (state.audioEl) try { state.audioEl.pause(); } catch {}
+      if ('speechSynthesis' in window) speechSynthesis.cancel();
+      if (state.ttsTimeout) clearTimeout(state.ttsTimeout);
+    });
+
+    // ========== Init ==========
+    (function init() {
+      el.btnVerify.disabled = !state.apiKey;
+      if (!state.apiKey) setTimeout(() => openSettings(true), CONFIG.SETTINGS_AUTO_OPEN_DELAY_MS);
+      // Enable editing on translated divs
+      setEditable(true);
+    })();
+  </script>
+</body>
+</html>
